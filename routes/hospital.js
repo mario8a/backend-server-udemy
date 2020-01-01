@@ -4,7 +4,6 @@ var mdAutenticacion = require('../middlewares/autenticacion');
 var app = express();
 
 var Hospital = require('../models/hospital');
-var Usuario = require('../models/usuario');
 
 //Rutas
 
@@ -15,7 +14,13 @@ var Usuario = require('../models/usuario');
 
 app.get('/', (req, res, next) => {
 
-    Hospital.find({}, 'nombre usuario')
+    var desde = req.query.desde || 0;
+    desde = Number(desde);
+
+    Hospital.find({})
+        .skip(desde)
+        .limit(5)
+        .populate('usuario', 'nombre email')
         .exec(
             (err, hospitales) => {
                 if (err) {
@@ -26,34 +31,16 @@ app.get('/', (req, res, next) => {
                     });
                 }
 
-                res.status(400).json({
-                    ok: true,
-                    hospitales
-                });
+                Hospital.count({}, (err, conteo) => {
+                    res.status(400).json({
+                        ok: true,
+                        hospitales,
+                        total: conteo
+                    });
+                })
+
             });
 });
-
-
-// app.get('/', (req, res, next) => {
-
-//     Hospital.find({}, function(err, hospitales) {
-//         Usuario.populate(hospitales, { path: 'usuario' }, function(err, hospitales) {
-
-//             if (err) {
-//                 return res.status(500).json({
-//                     ok: false,
-//                     mensaje: 'Error cargando hospitales',
-//                     erros: err
-//                 });
-//             }
-
-//             res.status(400).json({
-//                 ok: true,
-//                 hospitales
-//             })
-//         })
-//     })
-// });
 
 // ===============================================
 // Actualizar hospitales
