@@ -103,6 +103,7 @@ app.post('/google', async(req, res) => {
 
                 res.status(200).json({
                     ok: true,
+                    mensaje: 'Usuario creado',
                     usuario: usuarioDB,
                     token: token,
                     id: usuarioDB._id
