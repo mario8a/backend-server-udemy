@@ -13,6 +13,25 @@ var CLIENT_ID = require('../config/config').CLIENT_ID;
 const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(CLIENT_ID);
 
+var mdAutenticacion = require('../middlewares/autenticacion');
+
+
+// ===================
+// Auth google
+// ===================
+
+app.get('/renuevaToken', mdAutenticacion.verificaToken, (req, res) => {
+
+    var token = jwt.sign({ usuario: req.usuario }, SEED, { expiresIn: 14400 });
+
+    return res.status(200).json({
+        ok: true,
+        token: token
+    });
+
+
+});
+
 // ===================
 // Auth google
 // ===================
@@ -24,7 +43,7 @@ async function verify(token) {
         // Or, if multiple clients access the backend:
         //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
     });
-    const payload = ticket.getPayload();
+    const paysad = ticket.getPayload();
     // const userid = payload['sub'];
     // If request specified a G Suite domain:
     //const domain = payload['hd'];
